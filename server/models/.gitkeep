@@ -1,0 +1,12 @@
+// =============================================
+//  models/ — Mongoose Schema Directory
+// =============================================
+//  This folder holds your Mongoose models (schemas).
+//  Each file defines the shape of a document in MongoDB.
+//
+//  Examples you'll create later:
+//    • User.model.js   → user profile, role, clerk ID
+//    • Room.model.js   → interview room metadata
+//
+//  Convention: PascalCase filenames (e.g., User.model.js)
+// =============================================

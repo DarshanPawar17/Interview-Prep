@@ -1,0 +1,16 @@
+// =============================================
+//  components/ — Reusable UI Elements
+// =============================================
+//  Place shared, presentational React components here.
+//  These are small, composable building blocks used
+//  across multiple pages.
+//
+//  Examples:
+//    • Button.jsx       → styled button variants
+//    • Modal.jsx        → overlay dialog
+//    • Navbar.jsx       → top navigation bar
+//    • CodeEditor.jsx   → Monaco wrapper component
+//
+//  Tip: keep components "dumb" — they receive props
+//  and render UI, but don't manage global state.
+// =============================================

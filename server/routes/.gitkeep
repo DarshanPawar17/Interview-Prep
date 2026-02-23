@@ -1,0 +1,15 @@
+// =============================================
+//  routes/ — API Route Definitions
+// =============================================
+//  Routes map HTTP methods + URL paths to controller
+//  functions.  They are the "address book" of the API.
+//
+//  Example (user.routes.js):
+//    router.post("/register", userController.register);
+//    router.get("/profile",   authMiddleware, userController.getProfile);
+//
+//  These route files are mounted in server.js via:
+//    app.use("/api/users", userRoutes);
+//
+//  Convention: camelCase filenames (e.g., user.routes.js)
+// =============================================

@@ -1,0 +1,655 @@
+/* =============================================
+ *  index.css — Global Styles & Design System
+ * =============================================
+ *
+ *  This stylesheet does three things:
+ *
+ *    1. IMPORTS  — Pulls in Tailwind CSS v4 + our JS config
+ *    2. THEME    — Registers design tokens as CSS custom
+ *                  properties (consumed by Tailwind utilities)
+ *    3. BASE     — Global typography, resets, scrollbars,
+ *                  and animated background classes
+ *
+ *  Color Philosophy (Portfolite Framer aesthetic):
+ *    • Pitch-black background  (#050505)
+ *    • Nearly-invisible borders (rgba white, 8% opacity)
+ *    • White-on-black typography with zinc-400 muted text
+ *    • Glow shadows for depth — no harsh drop-shadows
+ *    • Glassmorphism: backdrop-blur + inner top highlight
+ *
+ * ============================================= */
+
+/* ─── 1. TAILWIND CSS v4 ────────────────────── */
+/* Single import pulls in all utilities, preflight,
+   and theme values. No @tailwind directives in v4! */
+@import "tailwindcss";
+
+/* ─── 2. REFERENCE THE JS CONFIG ────────────── */
+/* This tells Tailwind v4 to read tailwind.config.js
+   for our extended colors, fonts, animations, etc. */
+@config "../tailwind.config.js";
+
+
+/* ==============================================
+ *  CUSTOM CSS PROPERTIES (Design Tokens)
+ * ==============================================
+ *  These variables mirror tailwind.config.js colors
+ *  but are available for any raw CSS usage (e.g.,
+ *  scrollbars, pseudo-elements, JS access).
+ * ============================================= */
+:root {
+  /* ── Core palette ── */
+  --color-background: #000000;
+  --color-surface: #111111;
+  --color-surface-light: #1A1A1A;
+  --color-primary: #FFFFFF;
+  --color-muted: #A1A1AA;
+  --color-border: rgba(255, 255, 255, 0.08);
+
+  /* ── Accent tones (for gradients and highlights) ── */
+  --color-accent-1: #1a1a2e;
+  /* Deep navy — mesh gradient stop 1 */
+  --color-accent-2: #16213e;
+  /* Midnight blue — mesh gradient stop 2 */
+  --color-accent-3: #0f3460;
+  /* Dark teal — mesh gradient stop 3 */
+  --color-accent-4: #1a1a1a;
+  /* Neutral dark — mesh gradient stop 4 */
+
+  /* ── Typography ── */
+  --font-heading: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* ── Shadows ── */
+  --shadow-glow: 0 0 40px -10px rgba(255, 255, 255, 0.1);
+  --shadow-glass: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  --shadow-glow-sm: 0 0 20px -5px rgba(255, 255, 255, 0.07);
+
+  /* ── Transitions ── */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Spacing scale ── */
+  --section-padding-y: clamp(4rem, 10vw, 8rem);
+  --container-padding-x: clamp(1rem, 5vw, 2rem);
+}
+
+
+/* ==============================================
+ *  BASE STYLES — Global resets & typography
+ * ============================================= */
+
+/* ── Box-model reset ── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Smooth scrolling ── */
+html {
+  scroll-behavior: smooth;
+  /* Prevent horizontal overflow from animated elements */
+  overflow-x: hidden;
+}
+
+/* ── Body defaults ── */
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  /* Sub-pixel rendering for crisp text on dark bg */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent content shift when scrollbar appears */
+  scrollbar-gutter: stable;
+}
+
+/* ── Headings — Plus Jakarta Sans ──
+ *  Pure #FFFFFF for maximum contrast on dark bg.
+ *  Tight letter-spacing (-0.04em) gives that premium
+ *  compressed feel. Text-shadow adds pop/glow over
+ *  the mesh background. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: #FFFFFF;
+  text-shadow: 0 0 80px rgba(255, 255, 255, 0.08);
+}
+
+/* ── Paragraph & body text ──
+ *  Changed from dull zinc-400 to white/70 for much
+ *  higher contrast. Only truly secondary text should
+ *  use the dimmer .text-muted utility explicitly. */
+p,
+span,
+li,
+label {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+}
+
+/* ── Links ── */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-muted);
+}
+
+/* ── Images ── */
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Code blocks ── */
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+
+/* ==============================================
+ *  SCROLLBAR — Minimal dark theme
+ * ==============================================
+ *  Custom scrollbar that blends with our dark UI.
+ *  6px thin, rounded, with hover glow.
+ * ============================================= */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+
+/* ==============================================
+ *  SELECTION — Branded text selection
+ * ============================================= */
+::selection {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+}
+
+
+/* ==============================================
+ *  VIDEO BACKGROUND — Portfolite fluid smoke
+ * ==============================================
+ *  A full-viewport video plays behind all content.
+ *  Three overlay layers sit on top:
+ *    1. VIGNETTE — Deep blue radial glow at edges
+ *    2. GRAIN    — Animated film noise for texture
+ *    3. DARK     — Subtle black overlay for contrast
+ * ============================================= */
+
+/* ── Video container ── */
+.video-bg-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #000000;
+}
+
+.video-bg-container video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.35;
+  filter: grayscale(40%) brightness(0.5);
+  pointer-events: none;
+}
+
+/* ── Blue vignette glow ──
+ *  Matches the Portfolite deep blue edge glow
+ *  using a large radial gradient overlay */
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background:
+    /* Blue glow — left edge */
+    radial-gradient(ellipse 40% 70% at -5% 50%,
+      rgba(20, 40, 100, 0.35) 0%,
+      transparent 70%),
+    /* Blue glow — right edge */
+    radial-gradient(ellipse 40% 70% at 105% 50%,
+      rgba(20, 40, 100, 0.35) 0%,
+      transparent 70%),
+    /* Blue glow — top */
+    radial-gradient(ellipse 70% 30% at 50% -5%,
+      rgba(15, 30, 80, 0.25) 0%,
+      transparent 70%),
+    /* General dark overlay for contrast */
+    linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.3) 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+}
+
+/* ── Film grain noise ──
+ *  SVG filter generates random noise, animated
+ *  at 10fps via CSS animation for cinematic texture */
+.grain-overlay {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 2;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  animation: grain-shift 0.5s steps(4) infinite;
+}
+
+@keyframes grain-shift {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(-2%, -3%);
+  }
+
+  50% {
+    transform: translate(3%, 1%);
+  }
+
+  75% {
+    transform: translate(-1%, 4%);
+  }
+}
+
+/* ── Content layer ── sits above video + overlays */
+.content-layer {
+  position: relative;
+  z-index: 3;
+}
+
+/* ── Legacy animated mesh (fallback / non-hero pages) ── */
+.animated-mesh-bg {
+  background: var(--color-background);
+}
+
+
+/* ==============================================
+ *  GLASS CARD — Glassmorphism utility
+ * ==============================================
+ *  A reusable card style with:
+ *    • semi-transparent surface background
+ *    • subtle white border
+ *    • inner top-edge glass highlight
+ *    • backdrop blur
+ *
+ *  Usage:
+ *    <div className="glass-card"> ... </div>
+ * ============================================= */
+.glass-card {
+  background: rgba(17, 17, 17, 0.6);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-glass);
+  transition: all var(--transition-base);
+}
+
+.glass-card:hover {
+  background: rgba(26, 26, 26, 0.7);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    var(--shadow-glass),
+    var(--shadow-glow-sm);
+}
+
+
+/* ==============================================
+ *  GLASSY BUTTONS — Portfolite-Style Pill Buttons
+ * ==============================================
+ *  All buttons are transparent/glassmorphic with
+ *  pill shapes, subtle borders, and backdrop blur.
+ *  Three hover animation variants available.
+ * ============================================= */
+
+/* ── Base glassy button ── */
+.btn-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+    0 0 0 0 rgba(255, 255, 255, 0);
+  transition:
+    background 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.25s ease;
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    0 0 30px -8px rgba(255, 255, 255, 0.12);
+}
+
+.btn-glass:active {
+  transform: scale(0.97);
+}
+
+/* ── Variant 1: Glow Sweep ──
+ *  A bright glow border sweeps around the button on hover */
+.btn-glow-sweep::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  background: conic-gradient(from 0deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 10%,
+      transparent 20%,
+      transparent 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: glow-rotate 2.5s linear infinite paused;
+  z-index: -1;
+}
+
+.btn-glow-sweep::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: -1;
+}
+
+.btn-glow-sweep:hover::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+@keyframes glow-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Variant 2: Shimmer Slide ──
+ *  A light streak slides across the button on hover */
+.btn-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.12) 40%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.12) 60%,
+      transparent 100%);
+  transition: none;
+  z-index: 1;
+}
+
+.btn-shimmer:hover::before {
+  animation: shimmer-slide 0.8s ease forwards;
+}
+
+@keyframes shimmer-slide {
+  to {
+    left: 140%;
+  }
+}
+
+/* ── Variant 3: Radial Reveal ──
+ *  A radial glow expands from center on hover */
+.btn-radial::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+      rgba(255, 255, 255, 0.12) 0%,
+      transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+  z-index: 0;
+}
+
+.btn-radial:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* ── Ghost variant — even more subtle ── */
+.btn-glass-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition:
+    color 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.btn-glass-ghost:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px -6px rgba(255, 255, 255, 0.08);
+}
+
+
+/* ==============================================
+ *  SEPARATOR — Subtle horizontal divider
+ * ============================================= */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+  border: none;
+}
+
+
+/* ==============================================
+ *  SECTION BADGE — Small tag/label above headings
+ * ==============================================
+ *  Usage:
+ *    <span className="section-badge">Services</span>
+ * ============================================= */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+
+/* ==============================================
+ *  TEXT GRADIENT — For flashy headings
+ * ==============================================
+ *  Usage:
+ *    <h1 className="text-gradient">Bold Title</h1>
+ * ============================================= */
+.text-gradient {
+  background: linear-gradient(135deg,
+      #FFFFFF 0%,
+      #A1A1AA 50%,
+      #FFFFFF 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Static white-to-muted gradient (no animation) */
+.text-gradient-static {
+  background: linear-gradient(135deg,
+      #FFFFFF 30%,
+      #A1A1AA 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* ==============================================
+ *  MARQUEE STRIP — Infinite scrolling tags
+ * ==============================================
+ *  Used for the service tags ticker. The trick is
+ *  to duplicate the items and translate -50%.
+ *
+ *  Usage:
+ *    <div className="marquee-strip">
+ *      <div className="marquee-content">
+ *        <span>Tag 1</span> <span>Tag 2</span> ...
+ *        <!-- duplicate the items -->
+ *        <span>Tag 1</span> <span>Tag 2</span> ...
+ *      </div>
+ *    </div>
+ * ============================================= */
+.marquee-strip {
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%);
+  -webkit-mask-image: linear-gradient(to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%);
+}
+
+.marquee-content {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-content:hover {
+  animation-play-state: paused;
+}
+
+
+/* ==============================================
+ *  FOCUS STYLES — Accessible keyboard focus
+ * ============================================= */
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.3);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+
+/* ==============================================
+ *  RESPONSIVE CONTAINER — Main content wrapper
+ * ==============================================
+ *  Usage:
+ *    <main className="page-container"> ... </main>
+ * ============================================= */
+.page-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: var(--container-padding-x);
+  padding-right: var(--container-padding-x);
+}
+
+.section-spacing {
+  padding-top: var(--section-padding-y);
+  padding-bottom: var(--section-padding-y);
+}

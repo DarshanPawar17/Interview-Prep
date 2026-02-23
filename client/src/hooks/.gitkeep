@@ -1,0 +1,17 @@
+// =============================================
+//  hooks/ — Custom React Hooks
+// =============================================
+//  Hooks let you extract and reuse stateful logic
+//  without changing your component hierarchy.
+//
+//  Examples:
+//    • useAuth.js        → wraps Clerk's auth state
+//    • useSocket.js      → manages Socket.io connection
+//    • useRooms.js       → TanStack Query fetcher for rooms
+//
+//  Naming convention: always start with "use" prefix.
+//
+//  TanStack Query hooks go here too:
+//    export const useRooms = () =>
+//      useQuery({ queryKey: ["rooms"], queryFn: fetchRooms });
+// =============================================

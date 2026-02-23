@@ -1,0 +1,16 @@
+// =============================================
+//  pages/ — Route-Level Components
+// =============================================
+//  Each file here represents a full "page" or "view"
+//  in your application, mapped to a URL path via
+//  React Router.
+//
+//  Examples:
+//    • Dashboard.jsx      → /dashboard
+//    • InterviewRoom.jsx  → /room/:id
+//    • Landing.jsx        → /
+//    • NotFound.jsx       → * (404)
+//
+//  Pages compose components/ together and connect
+//  to hooks/ and context/ for data + state.
+// =============================================

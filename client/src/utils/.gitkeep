@@ -1,0 +1,13 @@
+// =============================================
+//  utils/ — Helper / Utility Functions
+// =============================================
+//  Pure functions and shared helpers that don't
+//  depend on React.  Keep them framework-agnostic
+//  so they're easy to test.
+//
+//  Examples:
+//    • api.js          → Axios / fetch wrapper
+//    • formatDate.js   → date formatting helpers
+//    • constants.js    → app-wide constants
+//    • validators.js   → form validation rules
+// =============================================

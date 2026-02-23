@@ -1,0 +1,15 @@
+// =============================================
+//  controllers/ — Business Logic Directory
+// =============================================
+//  Controllers handle the "what happens" when an API
+//  endpoint is hit.  They:
+//    1. Receive the request (req) from a route
+//    2. Interact with Models to read/write data
+//    3. Send back the response (res)
+//
+//  Examples you'll create later:
+//    • user.controller.js  → register, getProfile
+//    • room.controller.js  → createRoom, joinRoom
+//
+//  Convention: camelCase filenames (e.g., user.controller.js)
+// =============================================

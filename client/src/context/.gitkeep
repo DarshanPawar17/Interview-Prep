@@ -1,0 +1,17 @@
+// =============================================
+//  context/ — React Context Providers
+// =============================================
+//  Context provides a way to pass data through the
+//  component tree without threading props manually.
+//
+//  Examples:
+//    • AuthProvider.jsx    → wraps <ClerkProvider>
+//    • SocketProvider.jsx  → shares a single Socket.io
+//                            connection across the app
+//    • ThemeProvider.jsx   → dark/light mode toggle
+//
+//  Usage pattern:
+//    1. Create context   → createContext()
+//    2. Build provider   → <MyContext.Provider value={...}>
+//    3. Consume anywhere → useContext(MyContext)
+// =============================================

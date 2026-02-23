@@ -1,0 +1,14 @@
+// =============================================
+//  middlewares/ — Express Middleware Directory
+// =============================================
+//  Middleware functions run BETWEEN the incoming request
+//  and your controller.  They can:
+//    • Verify authentication tokens (auth.middleware.js)
+//    • Catch & format errors (error.middleware.js)
+//    • Log requests, rate-limit, etc.
+//
+//  Usage in routes:
+//    router.get("/profile", authMiddleware, controller.getProfile);
+//
+//  Convention: camelCase filenames (e.g., auth.middleware.js)
+// =============================================
