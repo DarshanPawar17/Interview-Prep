@@ -1,12 +1,12 @@
 // =============================================
-//  Navbar.jsx — Portfolite-Style Navigation Bar
+//  Navbar.jsx — Full-Width Glassmorphic Navigation
 // =============================================
 //
-//  Glassmorphic transparent header with:
-//    • Proper spacing between all elements
-//    • Toggle animation on nav link hover (underline reveal)
-//    • Glassy pill CTA button with shimmer hover
-//    • Animated hamburger for mobile
+//  Spec: h-20, fixed top-0 w-full z-50
+//  bg-black/50 backdrop-blur-xl border-b border-white/5
+//  Animated underline hover on nav links
+//  Glowing gradient CTA button
+//  Hamburger menu for mobile
 // =============================================
 
 import { useState } from "react";
@@ -30,12 +30,19 @@ const NavLink = ({ label, href }) => {
             to={href}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative font-sans text-[13px] tracking-wide whitespace-nowrap py-2 px-1"
+            className="relative font-sans text-[14px] tracking-wide whitespace-nowrap py-2 px-1"
         >
-            {/* Text with smooth color toggle */}
+            {/* Text with smooth color toggle + scale pop + glow */}
             <motion.span
-                animate={{ color: isHovered ? "#ffffff" : "rgba(255,255,255,0.45)" }}
+                animate={{
+                    color: isHovered ? "#ffffff" : "rgba(255,255,255,0.5)",
+                    textShadow: isHovered
+                        ? "0 0 12px rgba(139,92,246,0.6), 0 0 30px rgba(99,102,241,0.3)"
+                        : "0 0 0px transparent",
+                }}
+                whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
+                className="inline-block"
             >
                 {label}
             </motion.span>
@@ -57,39 +64,46 @@ const Navbar = () => {
     return (
         <nav
             className="
-        fixed top-4 left-6 right-6 z-50
-        h-14
-        bg-transparent
+        fixed top-0 left-0 right-0 z-50
+        h-20
+        bg-black/50
         backdrop-blur-xl
-        border border-white/[0.06]
-        rounded-2xl
+        border-b border-white/[0.05]
         flex justify-between items-center
-        px-6
+        px-8 md:px-12
       "
         >
             {/* ── Logo / Brand ───────────────────── */}
-            <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-                <span className="text-white/80 text-lg">⊞</span>
-                <span
-                    className="
-            font-heading text-[15px] font-medium tracking-tight text-white
-            group-hover:text-white/80 transition-colors duration-300
-          "
-                >
-                    InterviewPlatform
-                </span>
-            </Link>
+            <motion.div
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                style={{ transformOrigin: "left center" }}
+                className="ml-2"
+            >
+                <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+                    <span className="text-white/80 text-lg">⊞</span>
+                    <span
+                        className="
+                font-heading text-[16px] font-semibold tracking-tight text-white
+                group-hover:text-white/80 transition-colors duration-300
+                group-hover:drop-shadow-[0_0_12px_rgba(139,92,246,0.5)]
+              "
+                    >
+                        InterviewPlatform
+                    </span>
+                </Link>
+            </motion.div>
 
             {/* ── Desktop Navigation Links ───────── */}
-            {/* Gap increased to gap-8 for breathing room between links */}
             <div className="hidden md:flex items-center gap-8 shrink-0">
                 {NAV_LINKS.map((link) => (
                     <NavLink key={link.label} label={link.label} href={link.href} />
                 ))}
             </div>
 
-            {/* ── CTA Button (Desktop) ─────────── */}
-            <div className="hidden md:block shrink-0 ml-6">
+            {/* ── CTA Buttons (Desktop) ────────── */}
+            <div className="hidden md:flex items-center gap-3 shrink-0 ml-6">
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -98,15 +112,20 @@ const Navbar = () => {
                         stiffness: 400,
                         damping: 17,
                     }}
-                    className="
-            btn-glass btn-shimmer
-            text-[13px] font-medium
-            px-5 py-2
-            bg-transparent
-            border-white/[0.12]
-          "
+                    className="btn-glass-ghost text-[12px] font-medium px-4 py-1.5"
                 >
-                    <span className="text-white/50 relative z-10">✦</span>
+                    <span className="relative z-10">Log In</span>
+                </motion.button>
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 17,
+                    }}
+                    className="btn-glass-ghost text-[12px] font-medium px-4 py-1.5"
+                >
                     <span className="relative z-10">Sign In</span>
                 </motion.button>
             </div>
@@ -140,10 +159,9 @@ const Navbar = () => {
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2, ease: "easeOut" }}
                         className="
-              absolute top-[calc(100%+8px)] left-0 right-0
+              absolute top-full left-0 right-0
               bg-black/60 backdrop-blur-2xl
-              border border-white/[0.06]
-              rounded-2xl
+              border-b border-white/[0.06]
               flex flex-col items-center gap-6
               py-8
               md:hidden
@@ -175,14 +193,8 @@ const Navbar = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                            className="
-                btn-glass btn-shimmer
-                text-[13px] font-medium
-                px-5 py-2
-                mt-2
-              "
+                            className="btn-glow-primary text-[13px] font-medium px-5 py-2 mt-2"
                         >
-                            <span className="text-white/50 relative z-10">✦</span>
                             <span className="relative z-10">Sign In</span>
                         </motion.button>
                     </motion.div>

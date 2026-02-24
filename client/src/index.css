@@ -39,7 +39,7 @@
  * ============================================= */
 :root {
   /* ── Core palette ── */
-  --color-background: #000000;
+  --color-background: #050505;
   --color-surface: #111111;
   --color-surface-light: #1A1A1A;
   --color-primary: #FFFFFF;
@@ -515,9 +515,60 @@ pre {
 
 .btn-glass-ghost:hover {
   color: #fff;
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 20px -6px rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 0 20px -2px rgba(255, 255, 255, 0.15),
+    0 0 50px -8px rgba(139, 92, 246, 0.25),
+    0 0 80px -12px rgba(99, 102, 241, 0.15),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+
+/* ── Variant 4: Glow Primary ──
+ *  Vivid gradient button with a soft colored glow.
+ *  Use for primary CTAs that need to pop. */
+.btn-glow-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2.25rem;
+  background: linear-gradient(135deg, #3b82f6, #6366f1, #a855f7);
+  background-size: 200% 200%;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 20px -4px rgba(99, 102, 241, 0.35),
+    0 0 60px -12px rgba(99, 102, 241, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transition:
+    box-shadow 0.35s ease,
+    filter 0.35s ease,
+    background-position 0.6s ease,
+    transform 0.25s ease;
+}
+
+.btn-glow-primary:hover {
+  filter: brightness(1.2);
+  background-position: 100% 50%;
+  box-shadow:
+    0 0 25px 0 rgba(99, 102, 241, 0.6),
+    0 0 50px -4px rgba(139, 92, 246, 0.5),
+    0 0 100px -10px rgba(168, 85, 247, 0.35),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-glow-primary:active {
+  transform: scale(0.97);
 }
 
 

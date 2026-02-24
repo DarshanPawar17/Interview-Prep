@@ -13,6 +13,7 @@
 
 import { motion } from "framer-motion";
 import Navbar from "./Navbar";
+import CursorGlow from "./CursorGlow";
 
 // ── Page transition variants ──────────────────
 const pageTransition = {
@@ -33,6 +34,8 @@ const VIDEO_URL =
 const Layout = ({ children }) => {
     return (
         <div className="min-h-screen relative">
+            {/* Cursor Glow Trail Effect */}
+            <CursorGlow />
             {/* LAYER 0 — Video Background */}
             <div className="video-bg-container">
                 <video
@@ -57,7 +60,7 @@ const Layout = ({ children }) => {
             <div className="content-layer">
                 <Navbar />
                 <motion.main
-                    className="pt-20"
+                    className="pt-24 min-h-screen flex flex-col"
                     initial={pageTransition.initial}
                     animate={pageTransition.animate}
                     transition={pageTransition.transition}

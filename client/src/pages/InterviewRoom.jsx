@@ -2,24 +2,15 @@
 //  InterviewRoom.jsx — Live Interview Workspace
 // =============================================
 //
-//  This is the main interview room where the
-//  interviewer and candidate collaborate. The layout
-//  is a full-screen split-view:
+//  Spec: h-screen overflow-hidden layout
+//  Left Panel (70%): Monaco Editor with:
+//    - Room ID display in top bar
+//    - Glowing gradient "Run Code" button
+//  Right Panel (30%): Video grid + Chat
+//    - aspect-video panels for proper sizing
+//    - Pill-shaped media control toolbar
 //
-//  ┌──────────────────────┬────────────┐
-//  │                      │  Video 1   │
-//  │   Code Editor        ├────────────┤
-//  │   (Monaco — 70%)     │  Video 2   │
-//  │                      ├────────────┤
-//  │                      │  Toolbar   │
-//  │                      ├────────────┤
-//  │                      │  Chat      │
-//  │                      │            │
-//  └──────────────────────┴────────────┘
-//
-//  This file is PURE UI — no WebRTC, no Socket.io,
-//  no complex state. Those will be wired in later.
-//
+//  This file is PURE UI — no WebRTC/Socket logic.
 // =============================================
 
 import { motion } from "framer-motion";
@@ -44,63 +35,64 @@ const DUMMY_MESSAGES = [
 const InterviewRoom = () => {
     return (
         // ── Full-screen container ──────────────
-        // h-screen + pt-20 accounts for the fixed navbar
+        // h-screen + pt-24 accounts for the fixed h-20 navbar
         // overflow-hidden prevents any scroll on the room
-        <div className="h-screen w-full bg-background overflow-hidden flex pt-20">
+        <div className="h-screen w-full bg-background overflow-hidden flex pt-24">
 
             {/* ═══════════════════════════════════════
        *  LEFT SIDE — Code Editor (70% width)
        * ═══════════════════════════════════════ */}
             <motion.div
-                className="w-[70%] m-4 rounded-2xl border border-white/10 bg-surface flex flex-col overflow-hidden"
+                className="w-[70%] m-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl flex flex-col overflow-hidden"
                 variants={panelVariants}
                 initial="hidden"
                 animate="visible"
                 custom={0}
             >
                 {/* ── Editor Top Bar ──────────────── */}
-                {/* Contains file info, language selector,
-            Run Code, and End Interview buttons */}
-                <div className="h-12 border-b border-white/10 flex justify-between items-center px-4 bg-surface-light shrink-0">
+                <div className="h-12 border-b border-white/10 flex justify-between items-center px-4 bg-white/[0.02] shrink-0">
 
-                    {/* Left side — file tabs / info */}
+                    {/* Left side — file info + Room ID */}
                     <div className="flex items-center gap-3">
                         {/* Language indicator dot */}
                         <div className="flex items-center gap-2">
                             <span className="w-3 h-3 rounded-full bg-yellow-400" />
-                            <span className="text-sm text-muted font-mono">main.js</span>
+                            <span className="text-sm text-white/50 font-mono">main.js</span>
                         </div>
                         {/* Separator */}
                         <div className="w-px h-5 bg-white/10" />
-                        {/* Language selector (static for now) */}
-                        <span className="text-xs text-muted/60 bg-white/5 rounded-md px-2 py-1">
+                        {/* Language selector */}
+                        <span className="text-xs text-white/30 bg-white/5 rounded-md px-2 py-1">
                             JavaScript
+                        </span>
+                        {/* Separator */}
+                        <div className="w-px h-5 bg-white/10" />
+                        {/* Room ID */}
+                        <span className="text-xs text-white/25 font-mono">
+                            Room: ABC-123
                         </span>
                     </div>
 
                     {/* Right side — action buttons */}
                     <div className="flex items-center gap-2">
-                        {/* Run Code button — green accent */}
+                        {/* Run Code button — Glowing gradient per spec */}
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             transition={{ type: "spring", stiffness: 400, damping: 17 }}
                             className="
+                btn-glow-primary
                 flex items-center gap-1.5
-                bg-emerald-500/20 text-emerald-400
-                border border-emerald-500/30
-                hover:bg-emerald-500/30
                 rounded-lg px-3 py-1.5
                 text-xs font-medium
                 cursor-pointer
-                transition-colors duration-200
               "
                         >
                             {/* Play icon */}
-                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                            <svg className="w-3.5 h-3.5 relative z-10" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                             </svg>
-                            Run Code
+                            <span className="relative z-10">Run Code</span>
                         </motion.button>
 
                         {/* End Interview button — red accent */}
@@ -129,14 +121,12 @@ const InterviewRoom = () => {
                 </div>
 
                 {/* ── Editor Main Area ────────────── */}
-                {/* Placeholder for Monaco Editor.
-            Later: <Editor theme="vs-dark" ... /> */}
                 <div className="flex-1 flex items-center justify-center relative">
                     {/* Background code lines (decorative) */}
                     <div className="absolute inset-0 opacity-[0.03] font-mono text-xs leading-6 p-6 overflow-hidden pointer-events-none select-none" aria-hidden="true">
                         {Array.from({ length: 30 }, (_, i) => (
                             <div key={i} className="whitespace-nowrap">
-                                <span className="text-muted/30 mr-6 inline-block w-6 text-right">{i + 1}</span>
+                                <span className="text-white/20 mr-6 inline-block w-6 text-right">{i + 1}</span>
                                 {i === 0 && "function twoSum(nums, target) {"}
                                 {i === 1 && "  const map = new Map();"}
                                 {i === 2 && "  for (let i = 0; i < nums.length; i++) {"}
@@ -153,20 +143,19 @@ const InterviewRoom = () => {
                         ))}
                     </div>
 
-                    {/* Cente42d placeholder text */}
+                    {/* Centered placeholder text */}
                     <div className="text-center z-10">
                         <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl mx-auto mb-4">
                             ⌨️
                         </div>
-                        <p className="text-muted text-sm font-medium">Monaco Editor Goes Here</p>
-                        <p className="text-muted/40 text-xs mt-1">Integrate with @monaco-editor/react</p>
+                        <p className="text-white/40 text-sm font-medium">Monaco Editor Goes Here</p>
+                        <p className="text-white/20 text-xs mt-1">Integrate with @monaco-editor/react</p>
                     </div>
                 </div>
 
                 {/* ── Output / Terminal Bar ────────── */}
-                {/* A small bottom bar simulating a terminal output panel */}
-                <div className="h-10 border-t border-white/10 bg-surface-light flex items-center px-4 shrink-0">
-                    <span className="text-xs text-muted/50 font-mono">{">"} Ready</span>
+                <div className="h-10 border-t border-white/10 bg-white/[0.02] flex items-center px-4 shrink-0">
+                    <span className="text-xs text-white/25 font-mono">{">"} Ready</span>
                 </div>
             </motion.div>
 
@@ -177,27 +166,22 @@ const InterviewRoom = () => {
             <div className="w-[30%] my-4 mr-4 flex flex-col gap-4">
 
                 {/* ── Video Grid ──────────────────── */}
-                {/* Two video panels stacked vertically.
-            Each has a floating name tag in the
-            bottom-left corner. */}
+                {/* aspect-video for proper responsive sizing */}
                 <motion.div
-                    className="h-48 rounded-2xl bg-surface-light border border-white/10 relative overflow-hidden shrink-0 group"
+                    className="aspect-video rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 relative overflow-hidden shrink-0 group"
                     variants={panelVariants}
                     initial="hidden"
                     animate="visible"
                     custom={0.1}
                 >
-                    {/* Video placeholder gradient */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent" />
-                    {/* Camera icon */}
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-muted/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <svg className="w-6 h-6 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
                             </svg>
                         </div>
                     </div>
-                    {/* Floating name tag */}
                     <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md rounded-md px-2 py-1 text-xs text-white flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         You (Host)
@@ -205,23 +189,20 @@ const InterviewRoom = () => {
                 </motion.div>
 
                 <motion.div
-                    className="h-48 rounded-2xl bg-surface-light border border-white/10 relative overflow-hidden shrink-0 group"
+                    className="aspect-video rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 relative overflow-hidden shrink-0 group"
                     variants={panelVariants}
                     initial="hidden"
                     animate="visible"
                     custom={0.2}
                 >
-                    {/* Video placeholder gradient */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent" />
-                    {/* Camera icon */}
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-muted/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <svg className="w-6 h-6 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                             </svg>
                         </div>
                     </div>
-                    {/* Floating name tag */}
                     <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md rounded-md px-2 py-1 text-xs text-white flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
                         Alex Johnson
@@ -229,11 +210,8 @@ const InterviewRoom = () => {
                 </motion.div>
 
                 {/* ── Media Controls Toolbar ──────── */}
-                {/* Pill-shaped floating bar with circular
-            toggle buttons for mic, camera, and
-            screen sharing. */}
                 <motion.div
-                    className="bg-surface border border-white/10 rounded-full h-16 flex items-center justify-center gap-4 px-6 shrink-0"
+                    className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-full h-14 flex items-center justify-center gap-4 px-6 shrink-0"
                     variants={panelVariants}
                     initial="hidden"
                     animate="visible"
@@ -324,10 +302,8 @@ const InterviewRoom = () => {
                 </motion.div>
 
                 {/* ── Chat Panel ──────────────────── */}
-                {/* flex-1 fills all remaining vertical space.
-            Messages at top, input pinned at bottom. */}
                 <motion.div
-                    className="flex-1 rounded-2xl bg-surface border border-white/10 flex flex-col overflow-hidden"
+                    className="flex-1 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 flex flex-col overflow-hidden"
                     variants={panelVariants}
                     initial="hidden"
                     animate="visible"
@@ -335,7 +311,7 @@ const InterviewRoom = () => {
                 >
                     {/* Chat header */}
                     <div className="h-10 border-b border-white/10 flex items-center px-4 shrink-0">
-                        <span className="text-xs font-medium text-muted">
+                        <span className="text-xs font-medium text-white/40">
                             💬 Live Chat
                         </span>
                     </div>
@@ -346,9 +322,9 @@ const InterviewRoom = () => {
                             <div key={msg.id} className="flex flex-col">
                                 <div className="flex items-center gap-2 mb-0.5">
                                     <span className="text-xs font-medium text-white">{msg.sender}</span>
-                                    <span className="text-[10px] text-muted/40">{msg.time}</span>
+                                    <span className="text-[10px] text-white/20">{msg.time}</span>
                                 </div>
-                                <p className="text-sm text-muted leading-relaxed">{msg.text}</p>
+                                <p className="text-sm text-white/50 leading-relaxed">{msg.text}</p>
                             </div>
                         ))}
                     </div>
@@ -362,7 +338,7 @@ const InterviewRoom = () => {
                 flex-1
                 bg-transparent
                 text-sm text-white
-                placeholder:text-muted/40
+                placeholder:text-white/20
                 outline-none
                 font-sans
               "
@@ -378,7 +354,7 @@ const InterviewRoom = () => {
                 cursor-pointer
               "
                         >
-                            <svg className="w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.126A59.768 59.768 0 0 1 21.485 12 59.77 59.77 0 0 1 3.27 20.876L5.999 12Zm0 0h7.5" />
                             </svg>
                         </button>

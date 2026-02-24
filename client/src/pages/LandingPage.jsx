@@ -1,9 +1,19 @@
 // =============================================
 //  LandingPage.jsx — Full-Page Section Layout
 // =============================================
+//
+//  Spec-aligned:
+//    • Hero: text-6xl md:text-8xl font-extrabold gradient
+//    • Sections: py-32 md:py-40 generous spacing
+//    • ScrollReveal wrappers on all sections
+//    • Deep Glass feature cards (rounded-3xl)
+//    • Glowing primary CTA buttons
+// =============================================
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import ScrollReveal from "../components/ScrollReveal";
+import MagneticGlow from "../components/MagneticGlow";
 
 // ── Stagger Container ─────────────────────────
 const containerVariants = {
@@ -98,9 +108,10 @@ const LandingPage = () => {
                             </span>
                         </motion.div>
 
+                        {/* Hero Heading — text-6xl md:text-8xl font-extrabold gradient */}
                         <motion.h1
                             variants={itemVariants}
-                            className="font-heading font-extralight text-6xl md:text-[110px] tracking-tighter leading-[0.9] text-white max-w-6xl"
+                            className="font-heading font-extrabold text-6xl md:text-8xl tracking-tighter leading-[0.9] text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 max-w-5xl"
                         >
                             Interviews that you
                             <br />
@@ -109,7 +120,7 @@ const LandingPage = () => {
 
                         <motion.p
                             variants={itemVariants}
-                            className="font-sans text-[15px] md:text-[17px] text-white/40 max-w-lg mt-8 leading-relaxed"
+                            className="font-sans text-lg md:text-xl text-white/40 font-light max-w-lg mt-8 leading-relaxed"
                         >
                             A real-time collaborative interview platform built with
                             React, Node.js, WebRTC, and Monaco Editor.
@@ -123,7 +134,7 @@ const LandingPage = () => {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 transition={buttonSpring}
-                                className="btn-glass btn-glow-sweep text-[15px] px-9 py-3.5"
+                                className="btn-glow-primary text-[15px] px-9 py-3.5"
                             >
                                 <span className="relative z-10">Get Started Now</span>
                             </motion.button>
@@ -157,195 +168,157 @@ const LandingPage = () => {
 
             {/* ═══════════════════════════════════════════
        *  PAGE 2 — FEATURES
-       *  Heading at top, spacious vertical layout
+       *  py-32 md:py-40 generous spacing
        * ═══════════════════════════════════════════ */}
-            <motion.section
-                className="min-h-screen relative py-16 md:py-20"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-80px" }}
-            >
+            <section className="relative py-48 md:py-60">
                 {/* Glassy background panel */}
-                <div className="absolute inset-x-4 md:inset-x-8 inset-y-6 rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-md pointer-events-none" />
+                <div className="absolute inset-x-4 md:inset-x-8 inset-0 rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-md pointer-events-none" />
 
                 <div className="page-container relative z-10">
 
-                    {/* ── Page 2 Heading — at the top ── */}
-                    <motion.div variants={itemVariants} className="text-center pt-6 mb-10">
+                    {/* ── Section Heading ── */}
+                    <ScrollReveal className="text-center">
                         <span className="section-badge mb-5 inline-block">Features</span>
-                        <h2 className="font-heading text-4xl md:text-6xl font-extralight tracking-tighter text-white mt-3">
+                        <h2 className="font-heading text-5xl md:text-7xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 mt-3">
                             Everything You Need
                         </h2>
-                        <p className="text-white/35 text-[15px] mt-6 max-w-md mx-auto leading-relaxed">
+                        <p className="text-white/35 text-lg md:text-xl font-light mt-4 mx-auto leading-relaxed text-center">
                             Core features built for seamless technical interviews.
                         </p>
+                    </ScrollReveal>
+
+                    {/* ── Feature cards — Deep Glass ── */}
+                    <motion.div
+                        className="grid md:grid-cols-3 gap-10 md:gap-12 mt-20 md:mt-28"
+                        variants={containerVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-80px" }}
+                    >
+                        {FEATURES.map((feature) => (
+                            <MagneticGlow key={feature.title}>
+                                <motion.div
+                                    variants={itemVariants}
+                                    whileHover={{
+                                        y: -6,
+                                        borderColor: "rgba(255,255,255,0.25)",
+                                        boxShadow: "0 0 25px 0 rgba(99,102,241,0.4), 0 0 60px -8px rgba(139,92,246,0.3), 0 0 100px -15px rgba(168,85,247,0.2), inset 0 1px 1px 0 rgba(255,255,255,0.15)",
+                                    }}
+                                    transition={{ duration: 0.35, ease: "easeOut" }}
+                                    className="
+                      rounded-3xl border border-white/[0.10]
+                      bg-white/[0.05] backdrop-blur-2xl
+                      p-10 md:p-12
+                      min-h-[260px] md:min-h-[300px]
+                      flex flex-col items-center justify-center text-center
+                      group cursor-default
+                      hover:bg-white/[0.08]
+                      transition-all duration-400
+                      shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)]
+                    "
+                                >
+                                    <div className="relative z-10 w-14 h-14 rounded-xl bg-white/[0.06] border border-white/[0.1] flex items-center justify-center text-2xl mb-10 group-hover:bg-white/[0.1] group-hover:border-white/[0.15] transition-all duration-300">
+                                        {feature.icon}
+                                    </div>
+                                    <h3 className="relative z-10 font-heading text-lg md:text-xl font-semibold text-white mb-6 tracking-tight">
+                                        {feature.title}
+                                    </h3>
+                                    <p className="relative z-10 text-white/40 text-[14px] leading-[1.8]">
+                                        {feature.description}
+                                    </p>
+                                </motion.div>
+                            </MagneticGlow>
+                        ))}
                     </motion.div>
 
-                    {/* ── Tech stack marquee ── */}
-                    <div className="mb-16 overflow-hidden rounded-2xl border border-white/[0.04] bg-white/[0.01] py-5">
-                        <div className="flex animate-marquee">
-                            {[...MARQUEE_LOGOS, ...MARQUEE_LOGOS].map((logo, i) => (
-                                <span
-                                    key={`${logo}-${i}`}
-                                    className="text-white/10 text-lg md:text-xl font-heading font-light tracking-tight whitespace-nowrap mx-10"
-                                >
-                                    {logo}
-                                </span>
+                    {/* ── Stats — Big gap above ── */}
+                    <ScrollReveal className="mt-48 md:mt-60">
+                        <div className="grid grid-cols-3 gap-8 pt-14 border-t border-white/[0.06]">
+                            {STATS.map((stat) => (
+                                <div key={stat.label} className="text-center">
+                                    <div className="text-3xl md:text-5xl font-heading font-extralight text-white tracking-tight">
+                                        {stat.value}
+                                    </div>
+                                    <div className="text-[12px] text-white/25 mt-6 uppercase tracking-wider">
+                                        {stat.label}
+                                    </div>
+                                </div>
                             ))}
                         </div>
-                    </div>
-
-                    {/* ── Feature cards ── */}
-                    <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-                        {FEATURES.map((feature) => (
-                            <motion.div
-                                key={feature.title}
-                                variants={itemVariants}
-                                whileHover={{ y: -6, borderColor: "rgba(255,255,255,0.18)" }}
-                                transition={{ duration: 0.35, ease: "easeOut" }}
-                                className="
-                  rounded-2xl border border-white/[0.08]
-                  bg-white/[0.03] backdrop-blur-lg
-                  p-8 md:p-10
-                  group cursor-default
-                  hover:bg-white/[0.06]
-                  transition-all duration-400
-                  shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]
-                "
-                            >
-                                <div className="w-14 h-14 rounded-xl bg-white/[0.06] border border-white/[0.1] flex items-center justify-center text-2xl mb-8 group-hover:bg-white/[0.1] group-hover:border-white/[0.15] transition-all duration-300">
-                                    {feature.icon}
-                                </div>
-                                <h3 className="font-heading text-lg md:text-xl font-semibold text-white mb-4 tracking-tight">
-                                    {feature.title}
-                                </h3>
-                                <p className="text-white/40 text-[14px] leading-[1.8]">
-                                    {feature.description}
-                                </p>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {/* ── Big gap before stats ── */}
-                    <motion.div
-                        variants={itemVariants}
-                        className="grid grid-cols-3 gap-8 mt-20 md:mt-28 pt-12 border-t border-white/[0.06]"
-                    >
-                        {STATS.map((stat) => (
-                            <div key={stat.label} className="text-center">
-                                <div className="text-3xl md:text-5xl font-heading font-extralight text-white tracking-tight">
-                                    {stat.value}
-                                </div>
-                                <div className="text-[12px] text-white/25 mt-4 uppercase tracking-wider">
-                                    {stat.label}
-                                </div>
-                            </div>
-                        ))}
-                    </motion.div>
+                    </ScrollReveal>
                 </div>
-            </motion.section>
+            </section>
 
             {/* ═══════════════════════════════════════════
        *  PAGE 3 — CTA
-       *  Heading at top, spacious content distribution
+       *  py-32 md:py-40 generous spacing
        * ═══════════════════════════════════════════ */}
-            <motion.section
-                className="min-h-screen flex items-center justify-center py-20 relative"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-80px" }}
-            >
+            <section className="min-h-screen flex items-center justify-center py-32 md:py-40 relative">
                 <div className="page-container w-full">
-                    <motion.div
-                        variants={itemVariants}
-                        className="
+                    <ScrollReveal>
+                        <MagneticGlow glowSize={400}>
+                            <div
+                                className="
               rounded-3xl border border-white/[0.08]
               bg-white/[0.03] backdrop-blur-xl
               shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]
               min-h-[75vh]
-              flex flex-col items-center justify-between
+              flex flex-col items-center justify-center gap-6
               px-8 md:px-16
               py-16 md:py-20
               text-center
               relative overflow-hidden
             "
-                    >
-                        {/* Background glow orbs */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/[0.015] rounded-full blur-[150px] pointer-events-none" aria-hidden="true" />
-                        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/[0.03] rounded-full blur-[100px] pointer-events-none" aria-hidden="true" />
-
-                        {/* ── Top: Heading area ── */}
-                        <div className="relative z-10">
-                            <motion.div variants={itemVariants} className="mb-8">
-                                <span className="section-badge">Try It Out</span>
-                            </motion.div>
-
-                            <motion.h2
-                                variants={itemVariants}
-                                className="font-heading text-4xl md:text-7xl font-extralight tracking-tighter text-white max-w-4xl"
                             >
-                                Ready to Experience
-                                <br />
-                                the Platform?
-                            </motion.h2>
-                        </div>
+                                {/* Background glow orbs */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/[0.015] rounded-full blur-[150px] pointer-events-none" aria-hidden="true" />
+                                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/[0.03] rounded-full blur-[100px] pointer-events-none" aria-hidden="true" />
 
-                        {/* ── Middle: Description ── */}
-                        <motion.p
-                            variants={itemVariants}
-                            className="text-white/35 text-[15px] md:text-[17px] max-w-md mx-auto leading-relaxed relative z-10"
-                        >
-                            Create a room, share the link, and start interviewing.
-                            It's that simple. No sign-up required for candidates.
-                        </motion.p>
+                                {/* ── Top: Heading area ── */}
+                                <div className="relative z-10">
+                                    <div className="mb-8">
+                                        <span className="section-badge">Try It Out</span>
+                                    </div>
 
-                        {/* ── Bottom: Buttons + highlights ── */}
-                        <div className="relative z-10 flex flex-col items-center">
-                            <motion.div
-                                variants={itemVariants}
-                                className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-10"
-                            >
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    transition={buttonSpring}
-                                    className="btn-glass btn-shimmer text-[15px] px-9 py-3.5"
-                                >
-                                    <span className="relative z-10">Create a Room</span>
-                                </motion.button>
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    transition={buttonSpring}
-                                    className="btn-glass-ghost btn-radial text-[15px] px-9 py-3.5"
-                                >
-                                    <span className="relative z-10">View Demo</span>
-                                </motion.button>
-                            </motion.div>
+                                    <h2 className="font-heading text-5xl md:text-7xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 max-w-4xl">
+                                        Ready to Experience
+                                        <br />
+                                        the Platform?
+                                    </h2>
+                                </div>
 
-                            <motion.div
-                                variants={itemVariants}
-                                className="flex flex-wrap items-center justify-center gap-8 text-white/20 text-[12px] tracking-wider uppercase"
-                            >
-                                <span className="flex items-center gap-2.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-green-400/60" />
-                                    No Sign-Up Needed
-                                </span>
-                                <span className="flex items-center gap-2.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400/60" />
-                                    WebRTC Video
-                                </span>
-                                <span className="flex items-center gap-2.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400/60" />
-                                    Live Code Sync
-                                </span>
-                            </motion.div>
-                        </div>
-                    </motion.div>
+                                {/* ── Middle: Description ── */}
+                                <p className="text-white/35 text-lg md:text-xl font-light max-w-3xl mx-auto leading-relaxed relative z-10">
+                                    Create a room, share the link, and start interviewing.
+                                    It's that simple. No sign-up required for candidates.
+                                </p>
+
+                                {/* ── Bottom: Buttons ── */}
+                                <div className="relative z-10 flex flex-col items-center mt-8">
+                                    <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            transition={buttonSpring}
+                                            className="btn-glow-primary text-[15px] px-9 py-3.5"
+                                        >
+                                            <span className="relative z-10">Create a Room</span>
+                                        </motion.button>
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            transition={buttonSpring}
+                                            className="btn-glass-ghost btn-radial text-[15px] px-9 py-3.5"
+                                        >
+                                            <span className="relative z-10">View Demo</span>
+                                        </motion.button>
+                                    </div>
+                                </div>
+                            </div>
+                        </MagneticGlow>
+                    </ScrollReveal>
                 </div>
-            </motion.section>
+            </section>
 
             {/* ═══════════════════════════════════════════
        *  FOOTER
