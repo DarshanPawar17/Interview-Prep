@@ -142,6 +142,24 @@ export default {
                     "0%": { transform: "translateX(0%)" },
                     "100%": { transform: "translateX(-50%)" },
                 },
+                "gradient-x": {
+                    "0%, 100%": {
+                        "background-size": "200% 200%",
+                        "background-position": "left center"
+                    },
+                    "50%": {
+                        "background-size": "200% 200%",
+                        "background-position": "right center"
+                    },
+                },
+                "spin-slow": {
+                    "from": {
+                        "transform": "rotate(0deg)"
+                    },
+                    "to": {
+                        "transform": "rotate(360deg)"
+                    },
+                }
             },
 
             // Map keyframes → animation utility classes
@@ -157,6 +175,8 @@ export default {
                 "pulse-glow": "pulse-glow 3s ease-in-out infinite",
                 shimmer: "shimmer 2s linear infinite",
                 marquee: "marquee 30s linear infinite",
+                "gradient-x": "gradient-x 15s ease infinite",
+                "spin-slow": "spin-slow 6s linear infinite",
             },
 
             // ────────────────────────────────────────────

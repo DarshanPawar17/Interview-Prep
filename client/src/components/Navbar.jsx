@@ -9,7 +9,7 @@
 //  Hamburger menu for mobile
 // =============================================
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -60,18 +60,44 @@ const NavLink = ({ label, href }) => {
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            // Hide if scrolling down past 80px, show if scrolling up
+            if (currentScrollY > lastScrollY && currentScrollY > 80) {
+                setIsVisible(false);
+            } else {
+                setIsVisible(true);
+            }
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [lastScrollY]);
 
     return (
-        <nav
+        <motion.nav
+            initial={{ y: 0, opacity: 1 }}
+            animate={{
+                y: isVisible ? 0 : "-100%",
+                opacity: isVisible ? 1 : 0
+            }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
             className="
-        fixed top-0 left-0 right-0 z-50
-        h-20
-        bg-black/50
-        backdrop-blur-xl
-        border-b border-white/[0.05]
-        flex justify-between items-center
-        px-8 md:px-12
-      "
+                fixed top-0 left-0 right-0 z-50
+                h-20
+                bg-white/[0.01] hover:bg-white/[0.03] text-white/90 
+                backdrop-blur-2xl
+                border-b border-white/[0.05]
+                flex justify-between items-center
+                px-8 md:px-12
+                transition-colors duration-500
+                hover:shadow-[0_4px_30px_rgba(255,255,255,0.05)]
+            "
         >
             {/* ── Logo / Brand ───────────────────── */}
             <motion.div
@@ -81,13 +107,26 @@ const Navbar = () => {
                 style={{ transformOrigin: "left center" }}
                 className="ml-2"
             >
-                <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-                    <span className="text-white/80 text-lg">⊞</span>
+                <Link to="/" className="flex items-center gap-3 group shrink-0">
+                    {/* Creative logo: chat bubble with code brackets = interview + coding */}
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 via-violet-500 to-rose-500 flex items-center justify-center shadow-[0_0_18px_rgba(167,139,250,0.5)] group-hover:shadow-[0_0_30px_rgba(167,139,250,0.7)] transition-shadow duration-300">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {/* Chat bubble outline */}
+                            <path d="M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.964L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                            {/* Code brackets inside */}
+                            <path d="M9.5 10L7.5 12l2 2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M14.5 10l2 2-2 2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </div>
+                    {/* Gradient brand text with glow */}
                     <span
                         className="
-                font-heading text-[16px] font-semibold tracking-tight text-white
-                group-hover:text-white/80 transition-colors duration-300
-                group-hover:drop-shadow-[0_0_12px_rgba(139,92,246,0.5)]
+                font-heading text-[17px] font-bold tracking-tight
+                bg-gradient-to-r from-white via-blue-200 to-indigo-300
+                bg-clip-text text-transparent
+                drop-shadow-[0_0_8px_rgba(139,92,246,0.3)]
+                group-hover:drop-shadow-[0_0_16px_rgba(139,92,246,0.6)]
+                transition-all duration-300
               "
                     >
                         InterviewPlatform
@@ -200,7 +239,7 @@ const Navbar = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </nav>
+        </motion.nav>
     );
 };
 
