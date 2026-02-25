@@ -13,7 +13,10 @@
 //  This file is PURE UI — no WebRTC/Socket logic.
 // =============================================
 
+import { useState } from "react";
 import { motion } from "framer-motion";
+import Editor from "@monaco-editor/react";
+import { executeCode } from "../utils/executeCode";
 
 // ── Entrance animation for panels ─────────────
 const panelVariants = {
@@ -32,186 +35,295 @@ const DUMMY_MESSAGES = [
     { id: 3, sender: "You", text: "Great, let's see the implementation.", time: "2:03 PM" },
 ];
 
+// ── Hover Aurora + Grid Background (Borrowed from Landing) ──
+const RoomBackground = () => (
+    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-[#030712]">
+        {/* Subtle grid */}
+        <div className="absolute inset-0 z-10 opacity-[0.15]" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.4) 1px, transparent 0)`, backgroundSize: '40px 40px' }} />
+        {/* Animated Aurora Orbs */}
+        <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15] }} transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-[20%] -left-[10%] w-[60%] h-[70%] rounded-full bg-purple-600/30 blur-[150px]" />
+        <motion.div animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.25, 0.1] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute top-[10%] -right-[10%] w-[50%] h-[60%] rounded-full bg-cyan-600/30 blur-[150px]" />
+        <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.35, 0.15] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute -bottom-[20%] left-[20%] w-[70%] h-[50%] rounded-full bg-pink-600/20 blur-[150px]" />
+    </div>
+);
+
 const InterviewRoom = () => {
+    const [language, setLanguage] = useState("javascript");
+    const [theme, setTheme] = useState("vs-dark");
+    const [code, setCode] = useState("// Write your code here...\n");
+    const [output, setOutput] = useState("");
+    const [isExecuting, setIsExecuting] = useState(false);
+    const [isError, setIsError] = useState(false);
+
+    const runCode = async () => {
+        if (!code.trim()) return;
+        setIsExecuting(true);
+        setOutput("");
+        setIsError(false);
+
+        const result = await executeCode(language, code);
+
+        if (result.success) {
+            setOutput(result.output);
+            setIsError(result.isError);
+        } else {
+            setOutput(result.output || "Execution failed.");
+            setIsError(true);
+        }
+        setIsExecuting(false);
+    };
+
     return (
-        // ── Full-screen container ──────────────
-        // h-screen + pt-24 accounts for the fixed h-20 navbar
-        // overflow-hidden prevents any scroll on the room
-        <div className="h-screen w-full bg-background overflow-hidden flex pt-24">
+        // ── Strict Dashboard Layout (No Window Scroll) ────────
+        // h-[calc(100vh-80px)] ensures it exactly fills the remaining screen (Layout navbar is 80px)
+        // overflow-hidden on the main container prevents the window from scrolling, fixing ALL overlap issues
+        // py-2 (8px) ensures very tight margin against the Navbar
+        <div className="h-[calc(100vh-80px)] w-full max-w-[1800px] mx-auto overflow-hidden flex flex-col lg:flex-row gap-6 px-6 lg:px-8 py-2 font-sans relative z-10">
+            <RoomBackground />
 
             {/* ═══════════════════════════════════════
-       *  LEFT SIDE — Code Editor (70% width)
+       *  LEFT SIDE — Code Editor (65% width)
        * ═══════════════════════════════════════ */}
             <motion.div
-                className="w-[70%] m-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl flex flex-col overflow-hidden"
+                className="flex-1 lg:w-[65%] flex flex-col h-full min-h-0 z-10"
                 variants={panelVariants}
                 initial="hidden"
                 animate="visible"
                 custom={0}
             >
-                {/* ── Editor Top Bar ──────────────── */}
-                <div className="h-12 border-b border-white/10 flex justify-between items-center px-4 bg-white/[0.02] shrink-0">
+                {/* ── Editor Container ── */}
+                {/* Restored relative positioning so exact layout bounds are respected */}
+                <div className="flex-1 relative rounded-2xl flex flex-col p-[1px] overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,0.5)] bg-[#0a0a0a]/90 backdrop-blur-2xl">
+                    {/* Gradient Border */}
+                    <span className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-white/10 opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                    {/* Left side — file info + Room ID */}
-                    <div className="flex items-center gap-3">
-                        {/* Language indicator dot */}
-                        <div className="flex items-center gap-2">
-                            <span className="w-3 h-3 rounded-full bg-yellow-400" />
-                            <span className="text-sm text-white/50 font-mono">main.js</span>
-                        </div>
-                        {/* Separator */}
-                        <div className="w-px h-5 bg-white/10" />
-                        {/* Language selector */}
-                        <span className="text-xs text-white/30 bg-white/5 rounded-md px-2 py-1">
-                            JavaScript
-                        </span>
-                        {/* Separator */}
-                        <div className="w-px h-5 bg-white/10" />
-                        {/* Room ID */}
-                        <span className="text-xs text-white/25 font-mono">
-                            Room: ABC-123
-                        </span>
-                    </div>
+                    {/* Inner Glass Container */}
+                    <div className="relative flex flex-col w-full h-full bg-transparent overflow-hidden">
+                        {/* ── Editor Top Bar ──────────────── */}
+                        <div className="h-14 border-b border-white/10 flex justify-between items-center px-4 shrink-0 bg-gradient-to-r from-white/[0.05] to-transparent z-10">
 
-                    {/* Right side — action buttons */}
-                    <div className="flex items-center gap-2">
-                        {/* Run Code button — Glowing gradient per spec */}
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                            className="
-                btn-glow-primary
-                flex items-center gap-1.5
-                rounded-lg px-3 py-1.5
-                text-xs font-medium
-                cursor-pointer
-              "
-                        >
-                            {/* Play icon */}
-                            <svg className="w-3.5 h-3.5 relative z-10" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                            </svg>
-                            <span className="relative z-10">Run Code</span>
-                        </motion.button>
+                            {/* Left side — file info + Room ID */}
+                            <div className="flex items-center gap-3">
+                                {/* Language indicator dot */}
+                                <div className="flex items-center gap-2">
+                                    <span className="w-3 h-3 rounded-full bg-yellow-400" />
+                                    <span className="text-sm text-white/50 font-mono">
+                                        main.{language === 'javascript' ? 'js' : language === 'python' ? 'py' : language === 'cpp' ? 'cpp' : 'java'}
+                                    </span>
+                                </div>
+                                {/* Separator */}
+                                <div className="w-px h-5 bg-white/10" />
 
-                        {/* End Interview button — red accent */}
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                            className="
-                flex items-center gap-1.5
-                bg-red-500/20 text-red-400
-                border border-red-500/30
-                hover:bg-red-500/30
-                rounded-lg px-3 py-1.5
-                text-xs font-medium
-                cursor-pointer
-                transition-colors duration-200
-              "
-                        >
-                            {/* X icon */}
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            End
-                        </motion.button>
-                    </div>
-                </div>
+                                {/* Language selector */}
+                                <select
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value)}
+                                    className="text-xs text-white/70 bg-white/5 border border-white/10 rounded-md px-2 py-1 outline-none focus:border-cyan-500/50 transition-colors cursor-pointer"
+                                >
+                                    <option value="javascript" className="bg-[#030712]">JavaScript</option>
+                                    <option value="python" className="bg-[#030712]">Python</option>
+                                    <option value="cpp" className="bg-[#030712]">C++</option>
+                                    <option value="java" className="bg-[#030712]">Java</option>
+                                </select>
 
-                {/* ── Editor Main Area ────────────── */}
-                <div className="flex-1 flex items-center justify-center relative">
-                    {/* Background code lines (decorative) */}
-                    <div className="absolute inset-0 opacity-[0.03] font-mono text-xs leading-6 p-6 overflow-hidden pointer-events-none select-none" aria-hidden="true">
-                        {Array.from({ length: 30 }, (_, i) => (
-                            <div key={i} className="whitespace-nowrap">
-                                <span className="text-white/20 mr-6 inline-block w-6 text-right">{i + 1}</span>
-                                {i === 0 && "function twoSum(nums, target) {"}
-                                {i === 1 && "  const map = new Map();"}
-                                {i === 2 && "  for (let i = 0; i < nums.length; i++) {"}
-                                {i === 3 && "    const complement = target - nums[i];"}
-                                {i === 4 && "    if (map.has(complement)) {"}
-                                {i === 5 && "      return [map.get(complement), i];"}
-                                {i === 6 && "    }"}
-                                {i === 7 && "    map.set(nums[i], i);"}
-                                {i === 8 && "  }"}
-                                {i === 9 && "  return [];"}
-                                {i === 10 && "}"}
-                                {i > 10 && ""}
+                                {/* Theme selector */}
+                                <select
+                                    value={theme}
+                                    onChange={(e) => setTheme(e.target.value)}
+                                    className="text-xs text-white/70 bg-white/5 border border-white/10 rounded-md px-2 py-1 outline-none focus:border-cyan-500/50 transition-colors cursor-pointer"
+                                >
+                                    <option value="vs-dark" className="bg-[#030712]">Dark Theme</option>
+                                    <option value="light" className="bg-[#030712]">Light Theme</option>
+                                    <option value="hc-black" className="bg-[#030712]">High Contrast</option>
+                                </select>
+
+                                {/* Separator */}
+                                <div className="w-px h-5 bg-white/10" />
+                                {/* Room ID */}
+                                <span className="text-xs text-white/25 font-mono">
+                                    Room: ABC-123
+                                </span>
                             </div>
-                        ))}
-                    </div>
 
-                    {/* Centered placeholder text */}
-                    <div className="text-center z-10">
-                        <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl mx-auto mb-4">
-                            ⌨️
+                            {/* Right side — action buttons */}
+                            <div className="flex items-center gap-3">
+                                {/* Run Code button — Stylish & Colorful */}
+                                <motion.button
+                                    onClick={runCode}
+                                    disabled={isExecuting}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                    className={`
+                flex items-center gap-2
+                rounded-lg px-5 py-2
+                text-sm font-bold tracking-wide
+                shadow-[0_0_20px_rgba(56,189,248,0.4)]
+                border border-white/20
+                transition-all duration-300
+                ${isExecuting ? "bg-white/10 text-white/50 cursor-not-allowed" : "bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 hover:from-cyan-400 hover:via-blue-400 hover:to-indigo-400 text-white cursor-pointer"}
+              `}
+                                >
+                                    {/* Play icon or Spinner */}
+                                    {isExecuting ? (
+                                        <svg className="w-4 h-4 animate-spin relative z-10" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    ) : (
+                                        <svg className="w-4 h-4 relative z-10" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                        </svg>
+                                    )}
+                                    <span className="relative z-10">{isExecuting ? "Executing..." : "Run Code"}</span>
+                                </motion.button>
+
+                                {/* End Interview button — Stylish & Colorful */}
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                    className="
+                flex items-center gap-2
+                bg-gradient-to-r from-rose-500/20 to-red-600/20 text-rose-300
+                border border-rose-500/40
+                hover:from-rose-500/40 hover:to-red-600/40 hover:text-white
+                rounded-lg px-5 py-2
+                text-sm font-bold tracking-wide
+                shadow-[0_0_15px_rgba(244,63,94,0.3)]
+                cursor-pointer
+                transition-all duration-300
+              "
+                                >
+                                    {/* X icon */}
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    End
+                                </motion.button>
+                            </div>
                         </div>
-                        <p className="text-white/40 text-sm font-medium">Monaco Editor Goes Here</p>
-                        <p className="text-white/20 text-xs mt-1">Integrate with @monaco-editor/react</p>
+
+                        {/* ── Editor Main Area ────────────── */}
+                        <div className="flex-1 w-full relative">
+                            <Editor
+                                height="100%"
+                                language={language}
+                                theme={theme}
+                                value={code}
+                                onChange={(value) => setCode(value || "")}
+                                options={{
+                                    minimap: { enabled: false },
+                                    fontSize: 14,
+                                    fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                                    fontLigatures: true,
+                                    padding: { top: 24, bottom: 24 },
+                                    smoothScrolling: true,
+                                    cursorBlinking: "smooth",
+                                    cursorSmoothCaretAnimation: "on",
+                                    formatOnPaste: true,
+                                    wordWrap: "on",
+                                    lineHeight: 24,
+                                    scrollbar: {
+                                        verticalScrollbarSize: 8,
+                                        horizontalScrollbarSize: 8,
+                                    }
+                                }}
+                                loading={
+                                    <div className="flex items-center justify-center h-full w-full text-white/40">
+                                        <span className="animate-pulse flex items-center gap-2">
+                                            <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                                            Loading Editor...
+                                        </span>
+                                    </div>
+                                }
+                            />
+                        </div>
+
                     </div>
                 </div>
 
-                {/* ── Output / Terminal Bar ────────── */}
-                <div className="h-10 border-t border-white/10 bg-white/[0.02] flex items-center px-4 shrink-0">
-                    <span className="text-xs text-white/25 font-mono">{">"} Ready</span>
+                {/* ── Output / Terminal Area ────────── */}
+                <div className="h-[180px] xl:h-[200px] rounded-2xl border border-white/10 bg-[#050505]/95 backdrop-blur-2xl shadow-xl flex flex-col shrink-0 relative overflow-hidden">
+                    {/* Inner glowing top border for depth */}
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50" />
+                    <div className="h-12 border-b border-white/5 flex items-center px-6 bg-white/[0.02] shrink-0">
+                        <span className="text-xs font-bold text-white/50 uppercase tracking-widest flex items-center gap-3">
+                            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
+                            Terminal Output
+                        </span>
+                    </div>
+                    <div className="flex-1 p-4 overflow-y-auto font-mono text-[13px] leading-relaxed relative">
+                        {isExecuting ? (
+                            <div className="flex items-center gap-3 text-white/50 animate-pulse">
+                                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Executing dynamically...
+                            </div>
+                        ) : output ? (
+                            <pre className={`whitespace-pre-wrap ${isError ? "text-red-400" : "text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]"}`}>
+                                {output}
+                            </pre>
+                        ) : (
+                            <span className="text-white/20 italic select-none">Click "Run Code" to compile and execute your solution...</span>
+                        )}
+                    </div>
                 </div>
             </motion.div>
 
-
             {/* ═══════════════════════════════════════
-       *  RIGHT SIDE — Video & Chat (30% width)
+       *  RIGHT SIDE — Video + Chat (35% width)
        * ═══════════════════════════════════════ */}
-            <div className="w-[30%] my-4 mr-4 flex flex-col gap-4">
+            <div className="w-full lg:w-[35%] flex flex-col gap-4 h-full min-h-0 overflow-y-auto pr-2 custom-scrollbar">
 
-                {/* ── Video Grid ──────────────────── */}
-                {/* aspect-video for proper responsive sizing */}
-                <motion.div
-                    className="aspect-video rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 relative overflow-hidden shrink-0 group"
-                    variants={panelVariants}
-                    initial="hidden"
-                    animate="visible"
-                    custom={0.1}
-                >
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
-                            </svg>
+                {/* ── Video Grid (Vertical Stack) ─────── */}
+                <div className="flex flex-col gap-4 shrink-0">
+                    {/* Host Video */}
+                    <motion.div
+                        className="aspect-video rounded-xl bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 relative overflow-hidden shrink-0 group shadow-lg"
+                        variants={panelVariants}
+                        initial="hidden"
+                        animate="visible"
+                        custom={0.1}
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
+                                <span className="text-xl">🧑‍💻</span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md rounded-md px-2 py-1 text-xs text-white flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        You (Host)
-                    </div>
-                </motion.div>
+                        <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur-md rounded-lg px-2.5 py-1.5 text-xs font-medium text-white flex items-center gap-2 border border-white/10">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            You (Host)
+                        </div>
+                    </motion.div>
 
-                <motion.div
-                    className="aspect-video rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 relative overflow-hidden shrink-0 group"
-                    variants={panelVariants}
-                    initial="hidden"
-                    animate="visible"
-                    custom={0.2}
-                >
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                            </svg>
+                    {/* Remote Video */}
+                    <motion.div
+                        className="aspect-video rounded-xl bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 relative overflow-hidden shrink-0 group shadow-lg"
+                        variants={panelVariants}
+                        initial="hidden"
+                        animate="visible"
+                        custom={0.2}
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-14 h-14 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                                <span className="text-xl">👩‍💻</span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md rounded-md px-2 py-1 text-xs text-white flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                        Alex Johnson
-                    </div>
-                </motion.div>
+                        <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur-md rounded-lg px-2.5 py-1.5 text-xs font-medium text-white flex items-center gap-2 border border-white/10">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                            Alex Johnson
+                        </div>
+                    </motion.div>
+                </div>
 
                 {/* ── Media Controls Toolbar ──────── */}
                 <motion.div
-                    className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-full h-14 flex items-center justify-center gap-4 px-6 shrink-0"
+                    className="bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 flex items-center justify-center gap-4 shrink-0 shadow-lg"
                     variants={panelVariants}
                     initial="hidden"
                     animate="visible"
@@ -303,16 +415,20 @@ const InterviewRoom = () => {
 
                 {/* ── Chat Panel ──────────────────── */}
                 <motion.div
-                    className="flex-1 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 flex flex-col overflow-hidden"
+                    className="flex-1 min-h-[300px] rounded-2xl bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 flex flex-col overflow-hidden shadow-lg relative shrink-0"
                     variants={panelVariants}
                     initial="hidden"
                     animate="visible"
                     custom={0.4}
                 >
+                    {/* Glowing Accent */}
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent opacity-50" />
+
                     {/* Chat header */}
-                    <div className="h-10 border-b border-white/10 flex items-center px-4 shrink-0">
-                        <span className="text-xs font-medium text-white/40">
-                            💬 Live Chat
+                    <div className="h-12 border-b border-white/10 flex items-center px-5 shrink-0 bg-white/[0.02]">
+                        <span className="text-xs font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
+                            <span className="text-sm">💬</span>
+                            Live Chat
                         </span>
                     </div>
 

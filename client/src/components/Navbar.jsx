@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 const NAV_LINKS = [
     { label: "Home", href: "/" },
     { label: "Dashboard", href: "/dashboard" },
-    { label: "Rooms", href: "/rooms" },
+    { label: "Room", href: "/room/123" },
     { label: "About", href: "/about" },
 ];
 
@@ -60,35 +60,11 @@ const NavLink = ({ label, href }) => {
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isVisible, setIsVisible] = useState(true);
-    const [lastScrollY, setLastScrollY] = useState(0);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-            // Hide if scrolling down past 80px, show if scrolling up
-            if (currentScrollY > lastScrollY && currentScrollY > 80) {
-                setIsVisible(false);
-            } else {
-                setIsVisible(true);
-            }
-            setLastScrollY(currentScrollY);
-        };
-
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [lastScrollY]);
 
     return (
-        <motion.nav
-            initial={{ y: 0, opacity: 1 }}
-            animate={{
-                y: isVisible ? 0 : "-100%",
-                opacity: isVisible ? 1 : 0
-            }}
-            transition={{ duration: 0.35, ease: "easeInOut" }}
+        <nav
             className="
-                fixed top-0 left-0 right-0 z-50
+                sticky top-0 left-0 right-0 z-50
                 h-20
                 bg-white/[0.01] hover:bg-white/[0.03] text-white/90 
                 backdrop-blur-2xl
@@ -239,7 +215,7 @@ const Navbar = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </motion.nav>
+        </nav>
     );
 };
 

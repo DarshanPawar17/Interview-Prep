@@ -61,11 +61,11 @@ const Layout = ({ children }) => {
                 <Navbar />
                 {/* 
                   STRICT NAVBAR CLEARANCE:
-                  Navbar is h-20 (80px) and fixed.
-                  pt-28 (112px) ensures no page content can ever slip underneath it.
+                  Navbar is h-20 (80px) and sticky.
+                  Main content flows naturally below it.
                 */}
                 <motion.main
-                    className="pt-28 min-h-screen flex flex-col"
+                    className="flex-1 flex flex-col min-h-[calc(100vh-80px)]"
                     initial={pageTransition.initial}
                     animate={pageTransition.animate}
                     transition={pageTransition.transition}

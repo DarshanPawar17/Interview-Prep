@@ -117,8 +117,7 @@ const Dashboard = () => {
             <AuroraBackground />
 
             <section
-                className="max-w-[1440px] w-full mx-auto pb-16 px-6 md:px-10 relative z-10 flex flex-col flex-1 overflow-x-hidden"
-                style={{ marginTop: '120px' }}
+                className="max-w-[1440px] w-full mx-auto mt-8 md:mt-12 pb-16 px-6 md:px-10 relative z-10 flex flex-col flex-1 overflow-x-hidden"
             >
                 {/* ── Page Header ─────────────────────── */}
                 <motion.div
