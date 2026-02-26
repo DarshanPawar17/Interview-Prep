@@ -151,19 +151,22 @@ const InterviewRoom = () => {
                                 <motion.button
                                     onClick={runCode}
                                     disabled={isExecuting}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
+                                    whileHover={!isExecuting ? { scale: 1.05, boxShadow: "0px 0px 25px rgba(56,189,248,0.8)" } : {}}
+                                    whileTap={!isExecuting ? { scale: 0.95 } : {}}
                                     transition={{ type: "spring", stiffness: 400, damping: 17 }}
                                     className={`
                 flex items-center gap-2
-                rounded-lg px-5 py-2
-                text-sm font-bold tracking-wide
-                shadow-[0_0_20px_rgba(56,189,248,0.4)]
+                rounded-lg px-6 py-2.5
+                text-sm font-black tracking-widest uppercase
+                shadow-[0_0_15px_rgba(56,189,248,0.5)]
                 border border-white/20
-                transition-all duration-300
-                ${isExecuting ? "bg-white/10 text-white/50 cursor-not-allowed" : "bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 hover:from-cyan-400 hover:via-blue-400 hover:to-indigo-400 text-white cursor-pointer"}
+                transition-all duration-300 relative overflow-hidden group
+                ${isExecuting ? "bg-white/10 text-white/50 cursor-not-allowed" : "bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 hover:from-cyan-400 hover:via-blue-400 hover:to-indigo-500 text-white cursor-pointer"}
               `}
                                 >
+                                    {!isExecuting && (
+                                        <span className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+                                    )}
                                     {/* Play icon or Spinner */}
                                     {isExecuting ? (
                                         <svg className="w-4 h-4 animate-spin relative z-10" fill="none" viewBox="0 0 24 24">
@@ -180,26 +183,27 @@ const InterviewRoom = () => {
 
                                 {/* End Interview button — Stylish & Colorful */}
                                 <motion.button
-                                    whileHover={{ scale: 1.05 }}
+                                    whileHover={{ scale: 1.05, boxShadow: "0px 0px 25px rgba(244,63,94,0.8)" }}
                                     whileTap={{ scale: 0.95 }}
                                     transition={{ type: "spring", stiffness: 400, damping: 17 }}
                                     className="
                 flex items-center gap-2
-                bg-gradient-to-r from-rose-500/20 to-red-600/20 text-rose-300
-                border border-rose-500/40
-                hover:from-rose-500/40 hover:to-red-600/40 hover:text-white
-                rounded-lg px-5 py-2
-                text-sm font-bold tracking-wide
-                shadow-[0_0_15px_rgba(244,63,94,0.3)]
+                bg-gradient-to-r from-rose-600 via-red-500 to-orange-500 text-white
+                border border-white/20
+                hover:from-rose-500 hover:via-red-400 hover:to-orange-400
+                rounded-lg px-6 py-2.5
+                text-sm font-black tracking-widest uppercase
+                shadow-[0_0_15px_rgba(244,63,94,0.5)]
                 cursor-pointer
-                transition-all duration-300
+                transition-all duration-300 relative group overflow-hidden
               "
                                 >
+                                    <span className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
                                     {/* X icon */}
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <svg className="w-4 h-4 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
-                                    End
+                                    <span className="relative z-10">End</span>
                                 </motion.button>
                             </div>
                         </div>
@@ -331,83 +335,87 @@ const InterviewRoom = () => {
                 >
                     {/* Mic button */}
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.15, rotate: -5, boxShadow: "0px 0px 20px rgba(56,189,248,0.6)" }}
                         whileTap={{ scale: 0.9 }}
                         transition={{ type: "spring", stiffness: 400, damping: 17 }}
                         className="
-              w-10 h-10 rounded-full
-              bg-white/10 border border-white/10
+              w-12 h-12 rounded-full
+              bg-gradient-to-br from-white/10 to-white/5 border border-white/20
               flex items-center justify-center
-              hover:bg-white/15 hover:border-white/20
-              transition-all duration-200
-              cursor-pointer
+              hover:bg-gradient-to-br hover:from-cyan-500 hover:to-blue-600 hover:border-cyan-400 text-white/80 hover:text-white
+              transition-all duration-300
+              cursor-pointer relative overflow-hidden group shadow-lg
             "
                         title="Toggle Microphone"
                     >
-                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <span className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+                        <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
                         </svg>
                     </motion.button>
 
                     {/* Camera button */}
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.15, rotate: 5, boxShadow: "0px 0px 20px rgba(52,211,153,0.6)" }}
                         whileTap={{ scale: 0.9 }}
                         transition={{ type: "spring", stiffness: 400, damping: 17 }}
                         className="
-              w-10 h-10 rounded-full
-              bg-white/10 border border-white/10
+              w-12 h-12 rounded-full
+              bg-gradient-to-br from-white/10 to-white/5 border border-white/20
               flex items-center justify-center
-              hover:bg-white/15 hover:border-white/20
-              transition-all duration-200
-              cursor-pointer
+              hover:bg-gradient-to-br hover:from-emerald-500 hover:to-teal-600 hover:border-emerald-400 text-white/80 hover:text-white
+              transition-all duration-300
+              cursor-pointer relative overflow-hidden group shadow-lg
             "
                         title="Toggle Camera"
                     >
-                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <span className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+                        <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9A2.25 2.25 0 0 0 13.5 5.25h-9A2.25 2.25 0 0 0 2.25 7.5v9A2.25 2.25 0 0 0 4.5 18.75Z" />
                         </svg>
                     </motion.button>
 
                     {/* Screen Share button */}
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.15, rotate: -5, boxShadow: "0px 0px 20px rgba(168,85,247,0.6)" }}
                         whileTap={{ scale: 0.9 }}
                         transition={{ type: "spring", stiffness: 400, damping: 17 }}
                         className="
-              w-10 h-10 rounded-full
-              bg-white/10 border border-white/10
+              w-12 h-12 rounded-full
+              bg-gradient-to-br from-white/10 to-white/5 border border-white/20
               flex items-center justify-center
-              hover:bg-white/15 hover:border-white/20
-              transition-all duration-200
-              cursor-pointer
+              hover:bg-gradient-to-br hover:from-purple-500 hover:to-fuchsia-600 hover:border-purple-400 text-white/80 hover:text-white
+              transition-all duration-300
+              cursor-pointer relative overflow-hidden group shadow-lg
             "
                         title="Share Screen"
                     >
-                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <span className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+                        <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25A2.25 2.25 0 0 1 5.25 3h13.5A2.25 2.25 0 0 1 21 5.25Z" />
                         </svg>
                     </motion.button>
 
                     {/* Divider */}
-                    <div className="w-px h-6 bg-white/10" />
+                    <div className="w-px h-8 bg-white/10" />
 
-                    {/* Leave Room button — red */}
+                    {/* Let's also do Leave Room button */}
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.15, rotate: 5, boxShadow: "0px 0px 25px rgba(244,63,94,0.8)" }}
                         whileTap={{ scale: 0.9 }}
                         transition={{ type: "spring", stiffness: 400, damping: 17 }}
                         className="
-              w-10 h-10 rounded-full
-              bg-red-500/20 border border-red-500/30
+              w-12 h-12 rounded-full
+              bg-gradient-to-br from-rose-500 to-red-600 border border-rose-400
               flex items-center justify-center
-              hover:bg-red-500/30
-              transition-all duration-200
-              cursor-pointer
+              hover:from-rose-400 hover:to-red-500 text-white
+              transition-all duration-300
+              cursor-pointer relative overflow-hidden group shadow-[0_0_15px_rgba(244,63,94,0.4)]
             "
                         title="Leave Room"
                     >
-                        <svg className="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <span className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+                        <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                         </svg>
                     </motion.button>
@@ -460,20 +468,22 @@ const InterviewRoom = () => {
               "
                             disabled
                         />
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.1, boxShadow: "0px 0px 15px rgba(168,85,247,0.5)" }}
+                            whileTap={{ scale: 0.9 }}
                             className="
-                w-8 h-8 rounded-lg
-                bg-white/10
+                w-9 h-9 rounded-lg
+                bg-gradient-to-br from-purple-500 to-indigo-600
                 flex items-center justify-center
-                hover:bg-white/15
-                transition-colors duration-200
-                cursor-pointer
+                hover:from-purple-400 hover:to-indigo-500
+                transition-all duration-300
+                cursor-pointer shadow-lg
               "
                         >
-                            <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <svg className="w-4 h-4 text-white translate-x-[-1px] translate-y-[1px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.126A59.768 59.768 0 0 1 21.485 12 59.77 59.77 0 0 1 3.27 20.876L5.999 12Zm0 0h7.5" />
                             </svg>
-                        </button>
+                        </motion.button>
                     </div>
                 </motion.div>
             </div>
